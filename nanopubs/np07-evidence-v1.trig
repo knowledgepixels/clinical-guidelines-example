@@ -1,0 +1,57 @@
+@prefix this: <http://purl.org/nanopub/temp/np07/> .
+@prefix sub: <http://purl.org/nanopub/temp/np07/> .
+@prefix np: <http://www.nanopub.org/nschema#> .
+@prefix npx: <http://purl.org/nanopub/x/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix orcid: <https://orcid.org/> .
+@prefix cpg: <https://example.org/demo/cpg-vocab/> .
+@prefix ex: <https://example.org/demo/clinical-guidance/> .
+@prefix src: <https://example.org/demo/source/> .
+
+sub:Head {
+  this: a np:Nanopublication;
+    np:hasAssertion sub:assertion;
+    np:hasProvenance sub:provenance;
+    np:hasPublicationInfo sub:pubinfo .
+}
+
+sub:assertion {
+  ex:recommendation-c-for-condition-a-v1 cpg:supportedByEvidence ex:evidence-record-v1 .
+
+  ex:evidence-record-v1 a cpg:EvidenceRecord;
+    rdfs:label "Evidence record for Intervention C in Condition A, Guidance A v1.0";
+    cpg:hasCertainty cpg:ModerateCertainty;
+    cpg:hasEvidenceSummary "One fictional randomised trial and one fictional pooled analysis reported benefit of Intervention C over Standard Approach D in adults meeting Criteria B, with no safety signal identified at the time of Version 1.0.";
+    cpg:hasSource src:demo-trial-dt-101, src:demo-pooled-analysis-dpa-03 .
+
+  src:demo-trial-dt-101 a cpg:Source, cpg:RandomisedTrialReport;
+    rdfs:label "Demo Trial DT-101";
+    dct:issued "2022"^^xsd:gYear;
+    dct:bibliographicCitation "Demo Trial DT-101. A fictional randomised trial of Intervention C in Condition A. Journal of Demonstration Evidence, 2022." .
+
+  src:demo-pooled-analysis-dpa-03 a cpg:Source, cpg:PooledAnalysisReport;
+    rdfs:label "Demo Pooled Analysis DPA-03";
+    dct:issued "2023"^^xsd:gYear;
+    dct:bibliographicCitation "Demo Pooled Analysis DPA-03. A fictional pooled analysis of Intervention C in Condition A. Journal of Demonstration Evidence, 2023." .
+
+  cpg:ModerateCertainty a cpg:CertaintyLevel;
+    rdfs:label "moderate certainty" .
+}
+
+sub:provenance {
+  sub:assertion prov:wasAttributedTo orcid:0000-0001-8492-0354;
+    prov:wasDerivedFrom <https://example.org/demo/guidance/guidance-a-1.0> .
+}
+
+sub:pubinfo {
+  this: dct:created "2026-09-15T14:40:13Z"^^xsd:dateTime;
+    dct:creator orcid:0000-0001-8492-0354;
+    dct:license <https://creativecommons.org/licenses/by/4.0/>;
+    npx:hasNanopubType npx:ExampleNanopub;
+    rdfs:comment "Synthetic demonstration content. All conditions, interventions, criteria, doses and sources are fictional and illustrative. Not clinical guidance and not to be used for any clinical purpose.";
+    rdfs:label "Evidence record of the Intervention C recommendation (Guidance A v1.0)";
+    npx:introduces ex:evidence-record-v1 .
+}

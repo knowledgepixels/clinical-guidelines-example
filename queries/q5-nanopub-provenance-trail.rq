@@ -1,0 +1,30 @@
+prefix np: <http://www.nanopub.org/nschema#>
+prefix dct: <http://purl.org/dc/terms/>
+prefix prov: <http://www.w3.org/ns/prov#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix cpg: <https://example.org/demo/cpg-vocab/>
+
+select ?component_aspect ?component ?nanopub_label ?attributed_to ?derived_from ?created
+where {
+  values ?component_aspect {
+    cpg:statedIn
+    cpg:recommendsIntervention
+    cpg:appliesToPopulation
+    cpg:hasApplicabilityConditions
+    cpg:hasRegimen
+    cpg:contraindicatedInPresenceOf
+    cpg:supportedByEvidence
+  }
+  graph ?assertion_graph { ?_recommendation ?component_aspect ?component }
+  ?nanopub np:hasAssertion ?assertion_graph;
+    np:hasPublicationInfo ?pubinfo_graph;
+    np:hasProvenance ?provenance_graph .
+  graph ?pubinfo_graph {
+    ?nanopub rdfs:label ?nanopub_label;
+      dct:created ?created .
+  }
+  graph ?provenance_graph {
+    ?assertion_graph prov:wasAttributedTo ?attributed_to;
+      prov:wasDerivedFrom ?derived_from .
+  }
+}

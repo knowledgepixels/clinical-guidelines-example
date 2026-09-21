@@ -1,0 +1,48 @@
+prefix np: <http://www.nanopub.org/nschema#>
+prefix dct: <http://purl.org/dc/terms/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix cpg: <https://example.org/demo/cpg-vocab/>
+
+select ?recommendation ?guidance_version ?version_identifier ?issued ?strength
+       ?dose ?route ?frequency ?maximum_duration ?recommendation_text ?asserted_in
+where {
+  graph ?assertion_graph {
+    ?recommendation a cpg:ClinicalRecommendationVersion;
+      cpg:statedIn ?guidance_version;
+      cpg:hasRecommendationStrength ?strength_concept;
+      cpg:hasRecommendationText ?recommendation_text .
+  }
+  ?asserted_in np:hasAssertion ?assertion_graph .
+  ?strength_concept rdfs:label ?strength .
+  ?guidance_version cpg:hasVersionIdentifier ?version_identifier;
+    dct:issued ?issued .
+  ?recommendation cpg:hasRegimen ?regimen .
+  ?regimen cpg:hasMaximumDuration ?maximum_duration;
+    cpg:hasDose/rdfs:label ?dose;
+    cpg:hasRoute/rdfs:label ?route;
+    cpg:hasFrequency/rdfs:label ?frequency .
+
+  filter not exists { ?superseding_recommendation dct:replaces ?recommendation }
+
+  filter not exists {
+    ?recommendation cpg:contraindicatedInPresenceOf ?contraindication .
+    ?_profile cpg:hasFinding ?contraindication .
+  }
+
+  {
+    select ?recommendation (count(distinct ?required_element) as ?required_count)
+    where {
+      ?recommendation (cpg:appliesToPopulation|cpg:hasApplicabilityConditions)/(cpg:requiresAllOf|cpg:requiresAgeGroup) ?required_element .
+    }
+    group by ?recommendation
+  }
+  {
+    select ?recommendation (count(distinct ?met_element) as ?met_count)
+    where {
+      ?recommendation (cpg:appliesToPopulation|cpg:hasApplicabilityConditions)/(cpg:requiresAllOf|cpg:requiresAgeGroup) ?met_element .
+      ?_profile (cpg:hasFinding|cpg:hasAgeGroup)/cpg:narrows* ?met_element .
+    }
+    group by ?recommendation
+  }
+  filter(?required_count = ?met_count)
+}

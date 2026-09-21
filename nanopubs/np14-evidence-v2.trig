@@ -1,0 +1,55 @@
+@prefix this: <http://purl.org/nanopub/temp/np14/> .
+@prefix sub: <http://purl.org/nanopub/temp/np14/> .
+@prefix np: <http://www.nanopub.org/nschema#> .
+@prefix npx: <http://purl.org/nanopub/x/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix orcid: <https://orcid.org/> .
+@prefix cpg: <https://example.org/demo/cpg-vocab/> .
+@prefix ex: <https://example.org/demo/clinical-guidance/> .
+@prefix src: <https://example.org/demo/source/> .
+
+sub:Head {
+  this: a np:Nanopublication;
+    np:hasAssertion sub:assertion;
+    np:hasProvenance sub:provenance;
+    np:hasPublicationInfo sub:pubinfo .
+}
+
+sub:assertion {
+  ex:recommendation-c-for-condition-a-v2 cpg:supportedByEvidence ex:evidence-record-v2 .
+
+  ex:evidence-record-v2 a cpg:EvidenceRecord;
+    rdfs:label "Evidence record for Intervention C in Condition A, Guidance A v2.0";
+    cpg:hasCertainty cpg:ModerateCertainty;
+    cpg:hasEvidenceSummary "A second fictional randomised trial located the benefit of Intervention C in the subgroup meeting both Criteria B1 and B2, and a fictional safety report identified an interaction with Contraindication L and a rise in adverse events beyond seven days of exposure.";
+    cpg:hasSource src:demo-trial-dt-101, src:demo-trial-dt-207, src:demo-safety-report-dsr-14;
+    cpg:carriesOverSourceFrom ex:evidence-record-v1 .
+
+  src:demo-trial-dt-207 a cpg:Source, cpg:RandomisedTrialReport;
+    rdfs:label "Demo Trial DT-207";
+    dct:issued "2025"^^xsd:gYear;
+    dct:bibliographicCitation "Demo Trial DT-207. A fictional randomised trial of Intervention C stratified by Criteria B1 and B2. Journal of Demonstration Evidence, 2025." .
+
+  src:demo-safety-report-dsr-14 a cpg:Source, cpg:SafetyReport;
+    rdfs:label "Demo Safety Report DSR-14";
+    dct:issued "2025"^^xsd:gYear;
+    dct:bibliographicCitation "Demo Safety Report DSR-14. A fictional pharmacovigilance signal review of Intervention C. Demonstration Safety Bulletin, 2025." .
+}
+
+sub:provenance {
+  sub:assertion prov:wasAttributedTo orcid:0000-0001-8492-0354;
+    prov:wasDerivedFrom <https://example.org/demo/guidance/guidance-a-2.0> .
+}
+
+sub:pubinfo {
+  this: dct:created "2026-09-15T14:40:13Z"^^xsd:dateTime;
+    dct:creator orcid:0000-0001-8492-0354;
+    dct:license <https://creativecommons.org/licenses/by/4.0/>;
+    npx:hasNanopubType npx:ExampleNanopub;
+    rdfs:comment "Synthetic demonstration content. All conditions, interventions, criteria, doses and sources are fictional and illustrative. Not clinical guidance and not to be used for any clinical purpose.";
+    rdfs:label "Evidence record of the Intervention C recommendation (Guidance A v2.0)";
+    npx:introduces ex:evidence-record-v2 .
+}

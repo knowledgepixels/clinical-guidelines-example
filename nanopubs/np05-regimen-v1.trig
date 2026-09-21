@@ -1,0 +1,63 @@
+@prefix this: <http://purl.org/nanopub/temp/np05/> .
+@prefix sub: <http://purl.org/nanopub/temp/np05/> .
+@prefix np: <http://www.nanopub.org/nschema#> .
+@prefix npx: <http://purl.org/nanopub/x/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix orcid: <https://orcid.org/> .
+@prefix cpg: <https://example.org/demo/cpg-vocab/> .
+@prefix ex: <https://example.org/demo/clinical-guidance/> .
+@prefix src: <https://example.org/demo/source/> .
+
+sub:Head {
+  this: a np:Nanopublication;
+    np:hasAssertion sub:assertion;
+    np:hasProvenance sub:provenance;
+    np:hasPublicationInfo sub:pubinfo .
+}
+
+sub:assertion {
+  ex:recommendation-c-for-condition-a-v1 cpg:hasRegimen ex:regimen-v1 .
+
+  ex:regimen-v1 a cpg:Regimen;
+    rdfs:label "Intervention C, 10 demo-units, oral, once daily, up to 14 days";
+    cpg:regimenFor ex:intervention-c;
+    cpg:hasDose ex:dose-10-demo-units;
+    cpg:hasRoute ex:route-oral;
+    cpg:hasFrequency ex:frequency-once-daily;
+    cpg:hasMaximumDuration "P14D"^^xsd:dayTimeDuration;
+    cpg:requiresReassessmentAfter "P14D"^^xsd:dayTimeDuration .
+
+  ex:dose-10-demo-units a cpg:Dose;
+    rdfs:label "10 demo-units";
+    cpg:hasNumericValue "10"^^xsd:decimal;
+    cpg:hasUnit ex:unit-demo-unit .
+
+  ex:unit-demo-unit a cpg:Unit;
+    rdfs:label "demo-unit" .
+
+  ex:route-oral a cpg:AdministrationRoute;
+    rdfs:label "oral route" .
+
+  ex:frequency-once-daily a cpg:Frequency;
+    rdfs:label "once daily";
+    cpg:hasAdministrationCount "1"^^xsd:integer;
+    cpg:hasAdministrationPeriod "P1D"^^xsd:dayTimeDuration .
+}
+
+sub:provenance {
+  sub:assertion prov:wasAttributedTo orcid:0000-0001-8492-0354;
+    prov:wasDerivedFrom <https://example.org/demo/guidance/guidance-a-1.0> .
+}
+
+sub:pubinfo {
+  this: dct:created "2026-09-15T14:40:13Z"^^xsd:dateTime;
+    dct:creator orcid:0000-0001-8492-0354;
+    dct:license <https://creativecommons.org/licenses/by/4.0/>;
+    npx:hasNanopubType npx:ExampleNanopub;
+    rdfs:comment "Synthetic demonstration content. All conditions, interventions, criteria, doses and sources are fictional and illustrative. Not clinical guidance and not to be used for any clinical purpose.";
+    rdfs:label "Regimen of the Intervention C recommendation (Guidance A v1.0)";
+    npx:introduces ex:regimen-v1 .
+}

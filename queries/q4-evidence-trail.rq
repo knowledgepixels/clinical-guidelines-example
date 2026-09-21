@@ -1,0 +1,23 @@
+prefix np: <http://www.nanopub.org/nschema#>
+prefix dct: <http://purl.org/dc/terms/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix cpg: <https://example.org/demo/cpg-vocab/>
+
+select ?evidence_record ?certainty ?source_label ?source_year ?citation
+       ?asserted_in ?source_described_in
+where {
+  graph ?assertion_graph {
+    ?_recommendation cpg:supportedByEvidence ?evidence_record .
+    ?evidence_record cpg:hasCertainty ?certainty_concept;
+      cpg:hasSource ?source .
+  }
+  ?asserted_in np:hasAssertion ?assertion_graph .
+  ?certainty_concept rdfs:label ?certainty .
+  graph ?source_graph {
+    ?source rdfs:label ?source_label;
+      dct:issued ?source_year;
+      dct:bibliographicCitation ?citation .
+  }
+  ?source_described_in np:hasAssertion ?source_graph .
+}
+order by ?source_year ?source_label

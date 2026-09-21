@@ -1,0 +1,28 @@
+prefix np: <http://www.nanopub.org/nschema#>
+prefix dct: <http://purl.org/dc/terms/>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix cpg: <https://example.org/demo/cpg-vocab/>
+
+select ?recommendation ?reason ?blocking_element ?blocking_element_label ?asserted_in
+where {
+  ?recommendation a cpg:ClinicalRecommendationVersion .
+  filter not exists { ?superseding_recommendation dct:replaces ?recommendation }
+  {
+    graph ?assertion_graph {
+      ?recommendation (cpg:appliesToPopulation|cpg:hasApplicabilityConditions) ?condition_set .
+    }
+    ?condition_set cpg:requiresAllOf|cpg:requiresAgeGroup ?blocking_element .
+    filter not exists { ?_profile (cpg:hasFinding|cpg:hasAgeGroup)/cpg:narrows* ?blocking_element }
+    bind("required condition not met" as ?reason)
+  }
+  union
+  {
+    graph ?assertion_graph {
+      ?recommendation cpg:contraindicatedInPresenceOf ?blocking_element .
+    }
+    ?_profile cpg:hasFinding ?blocking_element .
+    bind("contraindication present" as ?reason)
+  }
+  ?blocking_element rdfs:label ?blocking_element_label .
+  ?asserted_in np:hasAssertion ?assertion_graph .
+}

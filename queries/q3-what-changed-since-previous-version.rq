@@ -1,0 +1,22 @@
+prefix np: <http://www.nanopub.org/nschema#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+prefix cpg: <https://example.org/demo/cpg-vocab/>
+
+select ?change_type ?change_label ?changed_aspect ?previous_value ?new_value
+       ?motivating_source ?curation_note ?asserted_in
+where {
+  graph ?assertion_graph {
+    ?change_set a cpg:GuidanceChangeSet;
+      cpg:changeFrom ?previous_recommendation;
+      cpg:changeTo ?_recommendation;
+      cpg:hasChange ?change .
+    ?change a ?change_type;
+      rdfs:label ?change_label;
+      cpg:changedAspect ?changed_aspect .
+    optional { ?change cpg:previousValue|cpg:previousLiteralValue ?previous_value }
+    optional { ?change cpg:newValue|cpg:newLiteralValue ?new_value }
+    optional { ?change cpg:motivatedByEvidence ?motivating_source }
+    optional { ?change cpg:hasCurationNote ?curation_note }
+  }
+  ?asserted_in np:hasAssertion ?assertion_graph .
+}

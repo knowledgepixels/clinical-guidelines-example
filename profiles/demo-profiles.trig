@@ -1,0 +1,24 @@
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix cpg: <https://example.org/demo/cpg-vocab/> .
+@prefix ex: <https://example.org/demo/clinical-guidance/> .
+@prefix profile: <https://example.org/demo/profile/> .
+
+profile:graph {
+  profile:profile-1 a cpg:PatientProfile;
+    rdfs:label "Profile 1: adult, Condition A, Criteria B1 and B2, no response to Standard Approach D, no contraindication";
+    cpg:hasAgeGroup ex:age-group-adult;
+    cpg:hasFinding ex:condition-a, ex:criteria-b1, ex:criteria-b2,
+      ex:non-response-to-standard-approach-d .
+
+  profile:profile-2 a cpg:PatientProfile;
+    rdfs:label "Profile 2: adult, Condition A, Criteria B1 only, no response to Standard Approach D, no contraindication";
+    cpg:hasAgeGroup ex:age-group-adult;
+    cpg:hasFinding ex:condition-a, ex:criteria-b1,
+      ex:non-response-to-standard-approach-d .
+
+  profile:profile-3 a cpg:PatientProfile;
+    rdfs:label "Profile 3: adult, Condition A, Criteria B1 and B2, no response to Standard Approach D, Contraindication L present";
+    cpg:hasAgeGroup ex:age-group-adult;
+    cpg:hasFinding ex:condition-a, ex:criteria-b1, ex:criteria-b2,
+      ex:non-response-to-standard-approach-d, ex:contraindication-l .
+}

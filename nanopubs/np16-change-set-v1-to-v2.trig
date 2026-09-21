@@ -1,0 +1,83 @@
+@prefix this: <http://purl.org/nanopub/temp/np16/> .
+@prefix sub: <http://purl.org/nanopub/temp/np16/> .
+@prefix np: <http://www.nanopub.org/nschema#> .
+@prefix npx: <http://purl.org/nanopub/x/> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix orcid: <https://orcid.org/> .
+@prefix cpg: <https://example.org/demo/cpg-vocab/> .
+@prefix ex: <https://example.org/demo/clinical-guidance/> .
+@prefix src: <https://example.org/demo/source/> .
+
+sub:Head {
+  this: a np:Nanopublication;
+    np:hasAssertion sub:assertion;
+    np:hasProvenance sub:provenance;
+    np:hasPublicationInfo sub:pubinfo .
+}
+
+sub:assertion {
+  ex:change-set-v1-to-v2 a cpg:GuidanceChangeSet;
+    rdfs:label "Changes from Guidance A v1.0 to Guidance A v2.0 for the Intervention C recommendation";
+    cpg:changeFrom ex:recommendation-c-for-condition-a-v1;
+    cpg:changeTo ex:recommendation-c-for-condition-a-v2;
+    cpg:hasChange ex:change-applicability-narrowed, ex:change-duration-shortened,
+      ex:change-contraindication-added, ex:change-prior-non-response-not-restated,
+      ex:change-reassessment-not-restated;
+    cpg:hasUnchangedAspect cpg:appliesToPopulation, cpg:recommendsIntervention,
+      cpg:hasRecommendationStrength, cpg:hasDose, cpg:hasRoute, cpg:hasFrequency .
+
+  ex:change-applicability-narrowed a cpg:Narrowing;
+    rdfs:label "Criteria B replaced by the conjunction of Criteria B1 and Criteria B2";
+    cpg:changedAspect cpg:hasApplicabilityConditions;
+    cpg:previousValue ex:applicability-conditions-v1;
+    cpg:newValue ex:applicability-conditions-v2;
+    cpg:motivatedByEvidence src:demo-trial-dt-207 .
+
+  ex:change-duration-shortened a cpg:Narrowing;
+    rdfs:label "Maximum duration shortened from 14 days to 7 days";
+    cpg:changedAspect cpg:hasMaximumDuration;
+    cpg:previousLiteralValue "P14D"^^xsd:dayTimeDuration;
+    cpg:newLiteralValue "P7D"^^xsd:dayTimeDuration;
+    cpg:motivatedByEvidence src:demo-safety-report-dsr-14 .
+
+  ex:change-contraindication-added a cpg:Addition;
+    rdfs:label "Contraindication L added alongside Contraindication K";
+    cpg:changedAspect cpg:contraindicatedInPresenceOf;
+    cpg:newValue ex:contraindication-l;
+    cpg:motivatedByEvidence src:demo-safety-report-dsr-14 .
+
+  ex:change-prior-non-response-not-restated a cpg:NotRestated;
+    rdfs:label "Prior non-response to Standard Approach D is not restated in Version 2.0";
+    cpg:changedAspect cpg:hasApplicabilityConditions;
+    cpg:previousValue ex:non-response-to-standard-approach-d;
+    cpg:hasCurationNote "The text of Version 2.0 names Criteria B1 and B2 as the applicability conditions and does not mention Standard Approach D. Whether the prior-non-response requirement was dropped or merely not repeated cannot be determined from the version text alone, so it is recorded here as not restated rather than as removed." .
+
+  ex:change-reassessment-not-restated a cpg:NotRestated;
+    rdfs:label "The reassessment requirement of Version 1.0 is not restated in Version 2.0";
+    cpg:changedAspect cpg:requiresReassessmentAfter;
+    cpg:previousLiteralValue "P14D"^^xsd:dayTimeDuration;
+    cpg:hasCurationNote "Version 1.0 required reassessment after 14 days. Version 2.0 states no reassessment interval, and its maximum duration is 7 days." .
+}
+
+sub:provenance {
+  sub:assertion prov:wasAttributedTo orcid:0000-0001-8492-0354;
+    prov:wasDerivedFrom <https://example.org/demo/guidance/guidance-a-1.0>,
+      <https://example.org/demo/guidance/guidance-a-2.0>;
+    prov:wasGeneratedBy ex:version-comparison-activity .
+
+  ex:version-comparison-activity a prov:Activity;
+    rdfs:label "Manual comparison of the two guidance version texts" .
+}
+
+sub:pubinfo {
+  this: dct:created "2026-09-15T14:40:13Z"^^xsd:dateTime;
+    dct:creator orcid:0000-0001-8492-0354;
+    dct:license <https://creativecommons.org/licenses/by/4.0/>;
+    npx:hasNanopubType npx:ExampleNanopub;
+    rdfs:comment "Synthetic demonstration content. All conditions, interventions, criteria, doses and sources are fictional and illustrative. Not clinical guidance and not to be used for any clinical purpose.";
+    rdfs:label "Change set from Guidance A v1.0 to v2.0";
+    npx:introduces ex:change-set-v1-to-v2 .
+}
